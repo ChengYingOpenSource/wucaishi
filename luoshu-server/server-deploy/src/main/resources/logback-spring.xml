@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <property name="FILE_PATH_ERROR" value="${log_path}/core-error.log"/>
+    <property name="FILE_PATH_WARN" value="${log_path}/core-warn.log"/>
+    <property name="FILE_PATH_INFO" value="${log_path}/core.log"/>
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%thread] %logger{50} - %msg%n
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 按照每天生成日志文件 -->
+    <appender name="FILE-ERROR"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--日志文件输出的文件名 -->
+        <File>${FILE_PATH_ERROR}</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 滚动日志文件保存格式 -->
+            <FileNamePattern>${FILE_PATH_ERROR}.%d{yyyy-MM-dd}.log
+            </FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <!-- 按临界值过滤日志：低于ERROR以下级别被抛弃 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%thread] %logger{50} - %msg%n
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="FILE-INFO"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--日志文件输出的文件名 -->
+        <File>${FILE_PATH_INFO}</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 滚动日志文件保存格式 -->
+            <FileNamePattern>${FILE_PATH_INFO}.%d{yyyy-MM-dd}.log
+            </FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <!-- 按临界值过滤日志：低于INFO以下级别被抛弃 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <!-- 按指定规则过滤日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch><!-- ERROR级别被抛弃 -->
+            <onMismatch>NEUTRAL</onMismatch><!-- 其它级别继续处理 -->
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>DENY</onMatch><!-- WARN级别被抛弃 -->
+            <onMismatch>NEUTRAL</onMismatch><!-- 其它级别继续处理 -->
+        </filter>
+        <encoder>
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%thread] %logger{50} - %msg%n
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="FILE-WARN"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--日志文件输出的文件名 -->
+        <File>${FILE_PATH_WARN}</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 滚动日志文件保存格式 -->
+            <FileNamePattern>${FILE_PATH_WARN}.%d{yyyy-MM-dd}.log
+            </FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <!-- 按临界值过滤日志：低于INFO以下级别被抛弃 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+        <!-- 按指定规则过滤日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch><!-- ERROR级别被抛弃 -->
+            <onMismatch>NEUTRAL</onMismatch><!-- 其它级别继续处理 -->
+        </filter>
+        <encoder>
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%thread] %logger{50} - %msg%n
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <springProfile name="test,dev,default">
+        <logger name="com.cy.onepush" level="DEBUG" additivity="false">
+            <appender-ref ref="STDOUT" />
+            <appender-ref ref="FILE-ERROR"/>
+            <appender-ref ref="FILE-WARN"/>
+            <appender-ref ref="FILE-INFO"/>
+        </logger>
+        <logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" level="TRACE" additivity="false">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="FILE-ERROR"/>
+            <appender-ref ref="FILE-WARN"/>
+            <appender-ref ref="FILE-INFO"/>
+        </logger>
+        <logger name="org.springframework" level="INFO" additivity="false">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="FILE-ERROR"/>
+            <appender-ref ref="FILE-WARN"/>
+            <appender-ref ref="FILE-INFO"/>
+        </logger>
+        <!-- 日志输出级别 -->
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="FILE-ERROR"/>
+            <appender-ref ref="FILE-WARN"/>
+            <appender-ref ref="FILE-INFO"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <logger name="com.cy.onepush" level="INFO" additivity="false">
+            <appender-ref ref="STDOUT" />
+            <appender-ref ref="FILE-ERROR"/>
+            <appender-ref ref="FILE-WARN"/>
+            <appender-ref ref="FILE-INFO"/>
+        </logger>
+        <logger name="org.springframework" level="ERROR" additivity="false">
+            <appender-ref ref="FILE-ERROR"/>
+            <appender-ref ref="FILE-WARN"/>
+            <appender-ref ref="FILE-INFO"/>
+        </logger>
+        <!-- 日志输出级别 -->
+        <root level="INFO">
+            <appender-ref ref="FILE-ERROR"/>
+            <appender-ref ref="FILE-WARN"/>
+            <appender-ref ref="FILE-INFO"/>
+        </root>
+    </springProfile>
+
+</configuration>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.onepush.datapackager.infrastructure.repository.mybatis.mapper.DataPackagerViewMapper">
+  <resultMap id="BaseResultMap" type="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerViewDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="data_packager_code" jdbcType="VARCHAR" property="dataPackagerCode" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="data_view_code" jdbcType="VARCHAR" property="dataViewCode" />
+    <result column="data_view_alias" jdbcType="VARCHAR" property="dataViewAlias" />
+    <result column="gmt_created" jdbcType="TIMESTAMP" property="gmtCreated" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, data_packager_code, data_view_code, data_view_alias, `version`, gmt_created, gmt_modified
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ep_data_packager_view
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByDataPackagerCodeAndVersion" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ep_data_packager_view
+    where data_packager_code = #{dataPackagerCode,jdbcType=VARCHAR} and `version` = #{version,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from ep_data_packager_view
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerViewDO" useGeneratedKeys="true">
+    insert into ep_data_packager_view (data_packager_code, `version`, data_view_code, data_view_alias,
+      gmt_created, gmt_modified)
+    values (#{dataPackagerCode,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{dataViewCode,jdbcType=VARCHAR}, #{dataViewAlias,jdbcType=VARCHAR},
+      #{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerViewDO" useGeneratedKeys="true">
+    insert into ep_data_packager_view (data_packager_code, `version`, data_view_code, data_view_alias,
+    gmt_created, gmt_modified) values
+    <foreach collection="collection" item="item" separator=",">
+      (#{item.dataPackagerCode,jdbcType=VARCHAR}, #{item.version,jdbcType=VARCHAR}, #{item.dataViewCode,jdbcType=VARCHAR}, #{item.dataViewAlias,jdbcType=VARCHAR},
+      #{item.gmtCreated,jdbcType=TIMESTAMP}, #{item.gmtModified,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerViewDO" useGeneratedKeys="true">
+    insert into ep_data_packager_view
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="dataPackagerCode != null">
+        data_packager_code,
+      </if>
+      <if test="version != null">
+        `version`,
+      </if>
+      <if test="dataViewCode != null">
+        data_view_code,
+      </if>
+      <if test="dataViewAlias != null">
+        data_view_alias,
+      </if>
+      <if test="gmtCreated != null">
+        gmt_created,
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="dataPackagerCode != null">
+        #{dataPackagerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="dataViewCode != null">
+        #{dataViewCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dataViewAlias != null">
+        #{dataViewAlias,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null">
+        #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerViewDO">
+    update ep_data_packager_view
+    <set>
+      <if test="dataPackagerCode != null">
+        data_packager_code = #{dataPackagerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        `version` = #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="dataViewCode != null">
+        data_view_code = #{dataViewCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dataViewAlias != null">
+        data_view_alias = #{dataViewAlias,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null">
+        gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerViewDO">
+    update ep_data_packager_view
+    set data_packager_code = #{dataPackagerCode,jdbcType=VARCHAR},
+      `version` = #{version,jdbcType=VARCHAR},
+      data_view_code = #{dataViewCode,jdbcType=VARCHAR},
+      data_view_alias = #{dataViewAlias,jdbcType=VARCHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <delete id="deleteByPackagerCodeAndVersion" parameterType="java.lang.String" >
+    delete from ep_data_packager_view
+    where data_packager_code = #{dataPackagerCode,jdbcType=VARCHAR} and `version` = #{version,jdbcType=VARCHAR}
+  </delete>
+</mapper>

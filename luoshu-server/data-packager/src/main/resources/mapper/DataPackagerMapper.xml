@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.onepush.datapackager.infrastructure.repository.mybatis.mapper.DataPackagerMapper">
+  <resultMap id="BaseResultMap" type="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="req_datastructure_code" jdbcType="VARCHAR" property="reqDatastructureCode" />
+    <result column="resp_datastructure_code" jdbcType="VARCHAR" property="respDatastructureCode" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="gmt_created" jdbcType="TIMESTAMP" property="gmtCreated" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="gmt_creator" jdbcType="BIGINT" property="gmtCreator" />
+    <result column="gmt_modifier" jdbcType="BIGINT" property="gmtModifier" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, code, `name`, req_datastructure_code, resp_datastructure_code, `version`, gmt_created, gmt_modified,
+    gmt_creator, gmt_modifier
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ep_data_packager
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByCodeAndVersion" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ep_data_packager
+    where code = #{code,jdbcType=VARCHAR} and `version` = #{version,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from ep_data_packager
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByCodeAndVersion">
+    delete from ep_data_packager
+    where code = #{code,jdbcType=VARCHAR} and `version` = #{version,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerDO" useGeneratedKeys="true">
+    insert into ep_data_packager (code, `name`, req_datastructure_code, 
+      resp_datastructure_code, `version`, gmt_created, gmt_modified,
+      gmt_creator, gmt_modifier)
+    values (#{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{reqDatastructureCode,jdbcType=VARCHAR}, 
+      #{respDatastructureCode,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP},
+      #{gmtCreator,jdbcType=BIGINT}, #{gmtModifier,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerDO" useGeneratedKeys="true">
+    insert into ep_data_packager
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="code != null">
+        code,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="reqDatastructureCode != null">
+        req_datastructure_code,
+      </if>
+      <if test="respDatastructureCode != null">
+        resp_datastructure_code,
+      </if>
+      <if test="version != null">
+        `version`,
+      </if>
+      <if test="gmtCreated != null">
+        gmt_created,
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified,
+      </if>
+      <if test="gmtCreator != null">
+        gmt_creator,
+      </if>
+      <if test="gmtModifier != null">
+        gmt_modifier,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="reqDatastructureCode != null">
+        #{reqDatastructureCode,jdbcType=VARCHAR},
+      </if>
+      <if test="respDatastructureCode != null">
+        #{respDatastructureCode,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=VARCHAR}
+      </if>
+      <if test="gmtCreated != null">
+        #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreator != null">
+        #{gmtCreator,jdbcType=BIGINT},
+      </if>
+      <if test="gmtModifier != null">
+        #{gmtModifier,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerDO">
+    update ep_data_packager
+    <set>
+      <if test="code != null">
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="reqDatastructureCode != null">
+        req_datastructure_code = #{reqDatastructureCode,jdbcType=VARCHAR},
+      </if>
+      <if test="respDatastructureCode != null">
+        resp_datastructure_code = #{respDatastructureCode,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        `version` = #{version,jdbcType=VARCHAR}
+      </if>
+      <if test="gmtCreated != null">
+        gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreator != null">
+        gmt_creator = #{gmtCreator,jdbcType=BIGINT},
+      </if>
+      <if test="gmtModifier != null">
+        gmt_modifier = #{gmtModifier,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerDO">
+    update ep_data_packager
+    set code = #{code,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      req_datastructure_code = #{reqDatastructureCode,jdbcType=VARCHAR},
+      resp_datastructure_code = #{respDatastructureCode,jdbcType=VARCHAR},
+      `version` = #{version,jdbcType=VARCHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      gmt_creator = #{gmtCreator,jdbcType=BIGINT},
+      gmt_modifier = #{gmtModifier,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByCodeAndVersion" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerDO">
+    update ep_data_packager
+    set `name` = #{name,jdbcType=VARCHAR},
+    gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+    gmt_modifier = #{gmtModifier,jdbcType=BIGINT}
+    where code = #{code,jdbcType=VARCHAR} and version = #{version,jdbcType=VARCHAR}
+  </update>
+</mapper>

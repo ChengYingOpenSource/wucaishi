@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.onepush.datastructure.infrastructure.repository.mybatis.mapper.DataStructureMapper">
+  <resultMap id="BaseResultMap" type="com.cy.onepush.datastructure.infrastructure.repository.mybatis.bean.DataStructureDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="field" jdbcType="VARCHAR" property="field" />
+    <result column="data_type" jdbcType="VARCHAR" property="dataType" />
+    <result column="required" jdbcType="BIT" property="required" />
+    <result column="parent_code" jdbcType="VARCHAR" property="parentCode" />
+    <result column="target_code" jdbcType="VARCHAR" property="targetCode" />
+    <result column="gmt_created" jdbcType="TIMESTAMP" property="gmtCreated" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, code, `name`, field, data_type, required, parent_code, target_code, gmt_created, gmt_modified
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ep_data_structure
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByTargetCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ep_data_structure
+    where target_code = #{targetCode,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from ep_data_structure
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="batchDeleteByTargetCode" parameterType="java.lang.String">
+    delete from ep_data_structure
+    where target_code in
+    <foreach collection="collection" item="item" separator="," open="(" close=")">
+      #{item}
+    </foreach>
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.datastructure.infrastructure.repository.mybatis.bean.DataStructureDO" useGeneratedKeys="true">
+    insert into ep_data_structure (code, `name`, field, data_type
+      required, parent_code, target_code, 
+      gmt_created, gmt_modified)
+    values (#{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{field,jdbcType=VARCHAR}, #{dataType,jdbcType=VARCHAR},
+      #{required,jdbcType=BIT}, #{parentCode,jdbcType=VARCHAR}, #{targetCode,jdbcType=VARCHAR},
+      #{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.datastructure.infrastructure.repository.mybatis.bean.DataStructureDO" useGeneratedKeys="true">
+    insert into ep_data_structure (code, `name`, field, data_type,
+    required, parent_code, target_code,
+    gmt_created, gmt_modified) values
+    <foreach collection="collection" item="item" separator=",">
+      (#{item.code,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.field,jdbcType=VARCHAR}, #{item.dataType,jdbcType=VARCHAR},
+      #{item.required,jdbcType=BIT}, #{item.parentCode,jdbcType=VARCHAR}, #{item.targetCode,jdbcType=VARCHAR},
+      #{item.gmtCreated,jdbcType=TIMESTAMP}, #{item.gmtModified,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+  <insert id="batchInsertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.datastructure.infrastructure.repository.mybatis.bean.DataStructureDO" useGeneratedKeys="true">
+    insert into ep_data_structure (code, `name`, field, data_type,
+    required, parent_code, target_code,
+    gmt_created, gmt_modified) values
+    <foreach collection="collection" item="item" separator=",">
+      (#{item.code,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.field,jdbcType=VARCHAR}, #{item.dataType,jdbcType=VARCHAR},
+      #{item.required,jdbcType=BIT}, #{item.parentCode,jdbcType=VARCHAR}, #{item.targetCode,jdbcType=VARCHAR},
+      #{item.gmtCreated,jdbcType=TIMESTAMP}, #{item.gmtModified,jdbcType=TIMESTAMP})
+    </foreach>
+    on duplicate key update
+    `name` = values(`name`),
+    field = values(field),
+    data_type = values(data_type),
+    required = values(required),
+    gmt_modified = values(gmt_modified)
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.datastructure.infrastructure.repository.mybatis.bean.DataStructureDO" useGeneratedKeys="true">
+    insert into ep_data_structure
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="code != null">
+        code,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="field != null">
+        field,
+      </if>
+      <if test="dataType != null">
+        data_type,
+      </if>
+      <if test="required != null">
+        required,
+      </if>
+      <if test="parentCode != null">
+        parent_code,
+      </if>
+      <if test="targetCode != null">
+        target_code,
+      </if>
+      <if test="gmtCreated != null">
+        gmt_created,
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="field != null">
+        #{field,jdbcType=VARCHAR},
+      </if>
+      <if test="dataType != null">
+        #{dataType,jdbcType=VARCHAR},
+      </if>
+      <if test="required != null">
+        #{required,jdbcType=BIT},
+      </if>
+      <if test="parentCode != null">
+        #{parentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="targetCode != null">
+        #{targetCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null">
+        #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cy.onepush.datastructure.infrastructure.repository.mybatis.bean.DataStructureDO">
+    update ep_data_structure
+    <set>
+      <if test="code != null">
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="field != null">
+        field = #{field,jdbcType=VARCHAR},
+      </if>
+      <if test="dataType != null">
+        data_type = #{dataType,jdbcType=VARCHAR},
+      </if>
+      <if test="required != null">
+        required = #{required,jdbcType=BIT},
+      </if>
+      <if test="parentCode != null">
+        parent_code = #{parentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="targetCode != null">
+        target_code = #{targetCode,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null">
+        gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cy.onepush.datastructure.infrastructure.repository.mybatis.bean.DataStructureDO">
+    update ep_data_structure
+    set code = #{code,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      field = #{field,jdbcType=VARCHAR},
+      data_type = #{dataType,jdbcType=VARCHAR},
+      required = #{required,jdbcType=BIT},
+      parent_code = #{parentCode,jdbcType=VARCHAR},
+      target_code = #{targetCode,jdbcType=VARCHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

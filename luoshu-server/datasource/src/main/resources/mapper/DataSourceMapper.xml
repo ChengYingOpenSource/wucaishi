@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.onepush.datasource.infrastructure.repository.mybatis.mapper.DataSourceMapper">
+  <resultMap id="BaseResultMap" type="com.cy.onepush.datasource.infrastructure.repository.mybatis.bean.DataSourceDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="ds_type" jdbcType="VARCHAR" property="dsType" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="gmt_created" jdbcType="TIMESTAMP" property="gmtCreated" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="gmt_creator" jdbcType="BIGINT" property="gmtCreator" />
+    <result column="gmt_modifier" jdbcType="BIGINT" property="gmtModifier" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cy.onepush.datasource.infrastructure.repository.mybatis.bean.DataSourceDO">
+    <result column="conf" jdbcType="LONGVARCHAR" property="conf" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, code, `name`, ds_type, remark, gmt_created, gmt_modified, gmt_creator, gmt_modifier
+  </sql>
+  <sql id="Blob_Column_List">
+    conf
+  </sql>
+  <select id="selectAll" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ep_data_source_v2
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ep_data_source_v2
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByCode" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ep_data_source_v2
+    where code = #{code,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from ep_data_source_v2
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByCode" parameterType="java.lang.String">
+    delete from ep_data_source_v2
+    where code = #{code,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.datasource.infrastructure.repository.mybatis.bean.DataSourceDO" useGeneratedKeys="true">
+    insert into ep_data_source_v2 (code, `name`, ds_type,
+      remark, gmt_created, gmt_modified,
+      gmt_creator, gmt_modifier, conf
+      )
+    values (#{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{dsType,jdbcType=VARCHAR},
+      #{remark,jdbcType=VARCHAR}, #{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP},
+      #{gmtCreator,jdbcType=BIGINT}, #{gmtModifier,jdbcType=BIGINT}, #{conf,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="batchInsert" parameterType="com.cy.onepush.datasource.infrastructure.repository.mybatis.bean.DataSourceDO">
+    insert into ep_data_source_v2 (id, project, ds_type,
+    `name`, df_sync_source, df_sync_dest,
+    match_metadata, remark, gmt_created,
+    gmt_modified, conf) values
+    <foreach collection="collection" item="item" separator="," >
+      (#{item.code,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.dsType,jdbcType=VARCHAR},
+      #{item.remark,jdbcType=VARCHAR}, #{item.gmtCreated,jdbcType=TIMESTAMP}, #{item.gmtModified,jdbcType=TIMESTAMP},
+      #{item.gmtCreator,jdbcType=BIGINT}, #{item.gmtModifier,jdbcType=BIGINT}, #{item.conf,jdbcType=LONGVARCHAR}
+      )
+    </foreach>
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.datasource.infrastructure.repository.mybatis.bean.DataSourceDO" useGeneratedKeys="true">
+    insert into ep_data_source_v2
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="code != null">
+        code,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="dsType != null">
+        ds_type,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="gmtCreated != null">
+        gmt_created,
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified,
+      </if>
+      <if test="gmtCreator != null">
+        gmt_creator,
+      </if>
+      <if test="gmtModifier != null">
+        gmt_modifier,
+      </if>
+      <if test="conf != null">
+        conf,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="dsType != null">
+        #{dsType,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null">
+        #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreator != null">
+        #{gmtCreator,jdbcType=BIGINT},
+      </if>
+      <if test="gmtModifier != null">
+        #{gmtModifier,jdbcType=BIGINT},
+      </if>
+      <if test="conf != null">
+        #{conf,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cy.onepush.datasource.infrastructure.repository.mybatis.bean.DataSourceDO">
+    update ep_data_source_v2
+    <set>
+      <if test="code != null">
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="dsType != null">
+        ds_type = #{dsType,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null">
+        gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreator != null">
+        gmt_creator = #{gmtCreator,jdbcType=BIGINT},
+      </if>
+      <if test="gmtModifier != null">
+        gmt_modifier = #{gmtModifier,jdbcType=BIGINT},
+      </if>
+      <if test="conf != null">
+        conf = #{conf,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cy.onepush.datasource.infrastructure.repository.mybatis.bean.DataSourceDO">
+    update ep_data_source_v2
+    set code = #{code,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      ds_type = #{dsType,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      gmt_creator = #{gmtCreator,jdbcType=BIGINT},
+      gmt_modifier = #{gmtModifier,jdbcType=BIGINT},
+      conf = #{conf,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cy.onepush.datasource.infrastructure.repository.mybatis.bean.DataSourceDO">
+    update ep_data_source_v2
+    set code = #{code,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      ds_type = #{dsType,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      gmt_creator = #{gmtCreator,jdbcType=BIGINT},
+      gmt_modifier = #{gmtModifier,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.datasource.infrastructure.repository.mybatis.bean.DataSourceDO" useGeneratedKeys="true">
+    insert into ep_data_source_v2 (code, `name`, ds_type,
+    remark, gmt_created, gmt_modified,
+    gmt_creator, gmt_modifier, conf
+    )
+    values (#{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{dsType,jdbcType=VARCHAR},
+    #{remark,jdbcType=VARCHAR}, #{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP},
+    #{gmtCreator,jdbcType=BIGINT}, #{gmtModifier,jdbcType=BIGINT}, #{conf,jdbcType=LONGVARCHAR}
+    )
+    on duplicate key update
+    `name` = values(`name`),
+    remark = values(remark),
+    gmt_modified = values(gmt_modified),
+    gmt_modifier = values(gmt_modifier),
+    conf = values(conf)
+  </insert>
+  <insert id="batchInsertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.datasource.infrastructure.repository.mybatis.bean.DataSourceDO" useGeneratedKeys="true">
+    insert into ep_data_source_v2 (code, `name`, ds_type,
+    remark, gmt_created, gmt_modified,
+    gmt_creator, gmt_modifier, conf
+    ) values
+    <foreach collection="collection" item="item" separator="," >
+      (#{item.code,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.dsType,jdbcType=VARCHAR},
+      #{item.remark,jdbcType=VARCHAR}, #{item.gmtCreated,jdbcType=TIMESTAMP}, #{item.gmtModified,jdbcType=TIMESTAMP},
+      #{item.gmtCreator,jdbcType=BIGINT}, #{item.gmtModifier,jdbcType=BIGINT}, #{item.conf,jdbcType=LONGVARCHAR}
+      )
+    </foreach>
+    on duplicate key update
+    `name` = values(`name`),
+    remark = values(remark),
+    gmt_modified = values(gmt_modified),
+    gmt_modifier = values(gmt_modifier),
+    conf = values(conf)
+  </insert>
+</mapper>

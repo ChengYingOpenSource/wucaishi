@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.onepush.project.infrastructure.repository.mybatis.mapper.ProjectMapper">
+  <resultMap id="BaseResultMap" type="com.cy.onepush.project.infrastructure.repository.mybatis.bean.ProjectDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="gmt_created" jdbcType="TIMESTAMP" property="gmtCreated" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="gmt_creator" jdbcType="BIGINT" property="gmtCreator" />
+    <result column="gmt_modifier" jdbcType="BIGINT" property="gmtModifier" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, code, `name`, description, gmt_created, gmt_modified, gmt_creator, gmt_modifier
+  </sql>
+  <select id="selectAll" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ep_project_v2
+    <where>
+      <if test="name != null">
+        and name like '%#{name}%'
+      </if>
+    </where>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ep_project_v2
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ep_project_v2
+    where code = #{code,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from ep_project_v2
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByCode" parameterType="java.lang.String">
+    delete from ep_project_v2
+    where code = #{code,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.project.infrastructure.repository.mybatis.bean.ProjectDO" useGeneratedKeys="true">
+    insert into ep_project_v2 (code, `name`, description, 
+      gmt_created, gmt_modified, gmt_creator, 
+      gmt_modifier)
+    values (#{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{gmtCreator,jdbcType=BIGINT}, 
+      #{gmtModifier,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.project.infrastructure.repository.mybatis.bean.ProjectDO" useGeneratedKeys="true">
+    insert into ep_project_v2
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="code != null">
+        code,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="gmtCreated != null">
+        gmt_created,
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified,
+      </if>
+      <if test="gmtCreator != null">
+        gmt_creator,
+      </if>
+      <if test="gmtModifier != null">
+        gmt_modifier,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null">
+        #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreator != null">
+        #{gmtCreator,jdbcType=BIGINT},
+      </if>
+      <if test="gmtModifier != null">
+        #{gmtModifier,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cy.onepush.project.infrastructure.repository.mybatis.bean.ProjectDO">
+    update ep_project_v2
+    <set>
+      <if test="code != null">
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null">
+        gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreator != null">
+        gmt_creator = #{gmtCreator,jdbcType=BIGINT},
+      </if>
+      <if test="gmtModifier != null">
+        gmt_modifier = #{gmtModifier,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cy.onepush.project.infrastructure.repository.mybatis.bean.ProjectDO">
+    update ep_project_v2
+    set code = #{code,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      gmt_creator = #{gmtCreator,jdbcType=BIGINT},
+      gmt_modifier = #{gmtModifier,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByCode" parameterType="com.cy.onepush.project.infrastructure.repository.mybatis.bean.ProjectDO">
+    update ep_project_v2
+    set `name` = #{name,jdbcType=VARCHAR},
+    description = #{description,jdbcType=VARCHAR},
+    gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+    gmt_modifier = #{gmtModifier,jdbcType=BIGINT}
+    where code = #{code,jdbcType=BIGINT}
+  </update>
+</mapper>

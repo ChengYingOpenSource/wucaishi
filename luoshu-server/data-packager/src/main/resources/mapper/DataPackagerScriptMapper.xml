@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.onepush.datapackager.infrastructure.repository.mybatis.mapper.DataPackagerScriptMapper">
+  <resultMap id="BaseResultMap" type="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerScriptDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="data_packager_code" jdbcType="VARCHAR" property="dataPackagerCode" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="script_type" jdbcType="VARCHAR" property="scriptType" />
+    <result column="gmt_created" jdbcType="TIMESTAMP" property="gmtCreated" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerScriptDO">
+    <result column="script_content" jdbcType="LONGVARCHAR" property="scriptContent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, data_packager_code, `version`, script_type, gmt_created, gmt_modified
+  </sql>
+  <sql id="Blob_Column_List">
+    script_content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ep_data_packager_script
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByDataPackagerCodeAndVersion" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ep_data_packager_script
+    where data_packager_code = #{dataPackagerCode,jdbcType=VARCHAR} and `version` = #{version,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from ep_data_packager_script
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByDataPackagerCodeAndVersion" >
+    delete from ep_data_packager_script
+    where data_packager_code = #{dataPackagerCode,jdbcType=VARCHAR} and `version` = #{version,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerScriptDO" useGeneratedKeys="true">
+    insert into ep_data_packager_script (data_packager_code, `version`, script_type, gmt_created,
+      gmt_modified, script_content)
+    values (#{dataPackagerCode,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{scriptType,jdbcType=VARCHAR}, #{gmtCreated,jdbcType=TIMESTAMP},
+      #{gmtModified,jdbcType=TIMESTAMP}, #{scriptContent,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerScriptDO" useGeneratedKeys="true">
+    insert into ep_data_packager_script
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="dataPackagerCode != null">
+        data_packager_code,
+      </if>
+      <if test="version != null">
+        `version`,
+      </if>
+      <if test="scriptType != null">
+        script_type,
+      </if>
+      <if test="gmtCreated != null">
+        gmt_created,
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified,
+      </if>
+      <if test="scriptContent != null">
+        script_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="dataPackagerCode != null">
+        #{dataPackagerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="scriptType != null">
+        #{scriptType,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null">
+        #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="scriptContent != null">
+        #{scriptContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerScriptDO">
+    update ep_data_packager_script
+    <set>
+      <if test="dataPackagerCode != null">
+        data_packager_code = #{dataPackagerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        `version` = #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="scriptType != null">
+        script_type = #{scriptType,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null">
+        gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="scriptContent != null">
+        script_content = #{scriptContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerScriptDO">
+    update ep_data_packager_script
+    set data_packager_code = #{dataPackagerCode,jdbcType=VARCHAR},
+      `version` = #{version,jdbcType=VARCHAR},
+      script_type = #{scriptType,jdbcType=VARCHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      script_content = #{scriptContent,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerScriptDO">
+    update ep_data_packager_script
+    set data_packager_code = #{dataPackagerCode,jdbcType=VARCHAR},
+      `version` = #{version,jdbcType=VARCHAR},
+      script_type = #{scriptType,jdbcType=VARCHAR},
+      gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByDataPackagerCodeWithVersion" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerScriptDO">
+    update ep_data_packager_script
+    set script_type = #{scriptType,jdbcType=VARCHAR},
+    gmt_modified = #{gmtModified,jdbcType=TIMESTAMP}
+    where data_packager_code = #{dataPackagerCode,jdbcType=VARCHAR} and `version` = #{version,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByDataPackagerCodeWithVersionAndBLOBs" parameterType="com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerScriptDO">
+    update ep_data_packager_script
+    set script_type = #{scriptType,jdbcType=VARCHAR},
+    gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+    script_content = #{scriptContent,jdbcType=LONGVARCHAR}
+    where data_packager_code = #{dataPackagerCode,jdbcType=VARCHAR} and `version` = #{version,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    password: root
+    url: jdbc:mysql://127.0.0.1:3306/luoshu?useSSL=false&useUnicode=true&characterEncoding=UTF-8
+    username: root
