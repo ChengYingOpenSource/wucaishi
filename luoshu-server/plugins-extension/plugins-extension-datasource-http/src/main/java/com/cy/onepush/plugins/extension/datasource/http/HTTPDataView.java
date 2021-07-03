@@ -87,10 +87,24 @@ public class HTTPDataView extends ParamsDataView {
         final RestTemplate restTemplate = httpDataSource.getRestTemplate();
         final HttpMethod method = HttpMethod.valueOf(MapUtils.getString(getParams(), "method"));
 
-        final HttpEntity httpEntity = CollectionUtils.isEmpty(params) ? null : new HttpEntity(params);
-        final RequestCallback requestCallback = restTemplate.httpEntityCallback(httpEntity, String.class);
+        final ResponseEntity<String> result;
         final ResponseExtractor<ResponseEntity<String>> responseExtractor = restTemplate.responseEntityExtractor(String.class);
-        final ResponseEntity<String> result = restTemplate.execute(url, method, requestCallback, responseExtractor);
+        switch (method) {
+            case GET:
+            case HEAD:
+                result = restTemplate.execute(url, method, null, responseExtractor, params);
+                break;
+            case POST:
+            case PUT:
+            case PATCH:
+                final HttpEntity httpEntity = CollectionUtils.isEmpty(params) ? null : new HttpEntity(params);
+                final RequestCallback requestCallback = restTemplate.httpEntityCallback(httpEntity, String.class);
+                result = restTemplate.execute(url, method, requestCallback, responseExtractor);
+                break;
+            default:
+                // bad method
+                throw new IllegalArgumentException();
+        }
         if (result == null || !HttpStatus.OK.equals(result.getStatusCode())) {
             // bad request
             return null;
