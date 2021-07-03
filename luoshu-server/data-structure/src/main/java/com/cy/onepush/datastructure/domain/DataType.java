@@ -155,7 +155,7 @@ public enum DataType {
                 final String field = dataStructureItem.getField();
 
                 final Object itemResult = dataType.resolve(dataStructureItem, ((Map<?, ?>) raw).get(field));
-                final Object itemResolved = isObject ? ((Map<String, Object>) itemResult).get(field) : itemResult;
+                final Object itemResolved = null == itemResult ? null : (isObject ? ((Map<String, Object>) itemResult).get(field) : itemResult);
                 result.put(field, itemResolved);
             });
 
