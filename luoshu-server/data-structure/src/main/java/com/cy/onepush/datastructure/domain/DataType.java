@@ -3,6 +3,7 @@ package com.cy.onepush.datastructure.domain;
 import com.cy.onepush.common.exception.Asserts;
 import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -165,9 +166,10 @@ public enum DataType {
                     final String field = dataStructureItem.getField();
 
                     final Object itemResult = dataType.resolve(dataStructureItem, dataItem.get(field));
-                    final Object itemResolved = isObject ? ((Map<String, Object>) itemResult).get(field) : itemResult;
+                    final Object itemResolved = isObject ? MapUtils.getObject((Map<String, Object>) itemResult, field) : itemResult;
                     return new AbstractMap.SimpleEntry<>(field, itemResolved);
                 })
+                .filter(item -> item.getValue() != null)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a)))
             .collect(Collectors.toList());
 
