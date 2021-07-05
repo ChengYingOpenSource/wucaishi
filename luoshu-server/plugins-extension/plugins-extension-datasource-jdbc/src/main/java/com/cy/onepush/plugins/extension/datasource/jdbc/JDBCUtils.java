@@ -34,32 +34,37 @@ public class JDBCUtils {
             connectionTesting++;
         }
 
-        final Properties properties = propertiesResolve(dataSourceProperties.toJdkProperties());
-
-        // driver class load
-        final String driverKlassName = properties.getProperty("driverClassName");
-        if (StringUtils.isBlank(driverKlassName)) {
-            // the class name is null
-            return false;
-        }
         try {
-            Class.forName(driverKlassName);
-        } catch (ClassNotFoundException e) {
-            final ResourceNotFoundException resourceNotFoundException = new ResourceNotFoundException("the driver class named %s not found", driverKlassName);
-            log.error(resourceNotFoundException.getMessage());
-            throw resourceNotFoundException;
-        }
+            final Properties properties = propertiesResolve(dataSourceProperties.toJdkProperties());
 
-        // try to connection test
-        try (
-            final Connection connection = DriverManager.getConnection(properties.getProperty("druid.url"), properties.getProperty("druid.username"), properties.getProperty("druid.password"));
-        ) {
-            // test sql execute
-            connection.prepareCall(properties.getProperty("validationSql"));
-            return true;
-        } catch (SQLException t) {
-            // failed
-            return false;
+            // driver class load
+            String driverKlassName = properties.getProperty("driverClassName");
+            if (StringUtils.isBlank(driverKlassName)) {
+                // the class name is null
+                driverKlassName = properties.getProperty("driverClass");
+                if (StringUtils.isBlank(driverKlassName)) {
+                    return false;
+                }
+            }
+            try {
+                Class.forName(driverKlassName);
+            } catch (ClassNotFoundException e) {
+                final ResourceNotFoundException resourceNotFoundException = new ResourceNotFoundException("the driver class named %s not found", driverKlassName);
+                log.error(resourceNotFoundException.getMessage());
+                throw resourceNotFoundException;
+            }
+
+            // try to connection test
+            try (
+                final Connection connection = DriverManager.getConnection(properties.getProperty("druid.url"), properties.getProperty("druid.username"), properties.getProperty("druid.password"));
+            ) {
+                // test sql execute
+                connection.prepareCall(properties.getProperty("validationSql"));
+                return true;
+            } catch (SQLException t) {
+                // failed
+                return false;
+            }
         } finally {
             synchronized (LOCK) {
                 connectionTesting--;
