@@ -43,7 +43,10 @@ public class DataStructureFactory {
         dataStructure.setRequired(MapUtils.getBooleanValue(root, "required"));
         parent.getDataStructures().add(dataStructure);
 
-        final List<Map<String, Object>> items = (List<Map<String, Object>>) MapUtils.getObject(root, "dataStructures");
+        List<Map<String, Object>> items = (List<Map<String, Object>>) MapUtils.getObject(root, "dataStructures");
+        if (CollectionUtils.isEmpty(items)) {
+            items = (List<Map<String, Object>>) MapUtils.getObject(root, "fields");
+        }
         if (CollectionUtils.isNotEmpty(items)) {
             items.forEach(item -> dfs(dataStructure, dataStructure.getId().getId(), item));
         }
