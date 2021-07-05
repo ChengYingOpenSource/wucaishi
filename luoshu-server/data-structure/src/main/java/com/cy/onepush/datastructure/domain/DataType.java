@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 public enum DataType {
 
-    NONE(0, (dataStructure, raw) -> null),
-    INT(2, (dataStructure, raw) -> {
+    NONE(0, false, (dataStructure, raw) -> null),
+    INT(1, (dataStructure, raw) -> {
         if (raw == null && dataStructure.isRequired()) {
             throw new IllegalArgumentException();
         }
@@ -36,7 +36,29 @@ public enum DataType {
 
         throw new IllegalArgumentException();
     }),
-    STRING(1, (dataStructure, raw) -> {
+    LONG(2, (dataStructure, raw) -> {
+        if (raw == null && dataStructure.isRequired()) {
+            throw new IllegalArgumentException();
+        }
+        if (raw == null) {
+            return null;
+        }
+
+        if (raw instanceof Number) {
+            return ((Number) raw).longValue();
+        }
+
+        if (raw instanceof String) {
+            try {
+                return Long.parseLong((java.lang.String) raw);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException();
+            }
+        }
+
+        throw new IllegalArgumentException();
+    }),
+    STRING(3, (dataStructure, raw) -> {
         if (raw == null && dataStructure.isRequired()) {
             throw new IllegalArgumentException();
         }
@@ -53,7 +75,26 @@ public enum DataType {
 
         return raw.toString();
     }),
-    DECIMAL(3, (dataStructure, raw) -> {
+    BOOL(4, (dataStructure, raw) -> {
+        if (raw == null && dataStructure.isRequired()) {
+            throw new IllegalArgumentException();
+        }
+        if (raw == null) {
+            return null;
+        }
+
+        if (raw instanceof Boolean) {
+            return raw;
+        } else if (raw instanceof String) {
+            if (StringUtils.isBlank((String) raw) && dataStructure.isRequired()) {
+                throw new IllegalArgumentException();
+            }
+            return Boolean.parseBoolean((String) raw);
+        }
+
+        throw new IllegalArgumentException();
+    }),
+    DECIMAL(5, (dataStructure, raw) -> {
         if (raw == null && dataStructure.isRequired()) {
             throw new IllegalArgumentException();
         }
@@ -73,7 +114,7 @@ public enum DataType {
 
         throw new IllegalArgumentException();
     }),
-    DATE(4, (dataStructure, raw) -> {
+    DATE(6, (dataStructure, raw) -> {
         if (raw == null && dataStructure.isRequired()) {
             throw new IllegalArgumentException();
         }
@@ -100,7 +141,7 @@ public enum DataType {
         throw new IllegalArgumentException();
     }),
     @SuppressWarnings("unchecked")
-    COLLECTION(5, (dataStructure, raw) -> {
+    COLLECTION(98, (dataStructure, raw) -> {
         if (raw == null && dataStructure.isRequired()) {
             throw new IllegalArgumentException();
         }
@@ -135,7 +176,7 @@ public enum DataType {
         );
     }),
     @SuppressWarnings("unchecked")
-    ITEM(6, (dataStructure, raw) -> {
+    ITEM(97, (dataStructure, raw) -> {
         if (raw == null && dataStructure.isRequired()) {
             throw new IllegalArgumentException();
         }
@@ -163,7 +204,7 @@ public enum DataType {
             dataStructure.getField(), result
         );
     }),
-    ANY(9, (dataStructure, raw) -> {
+    ANY(99, false, (dataStructure, raw) -> {
         if (raw == null && dataStructure.isRequired()) {
             throw new IllegalArgumentException();
         }
@@ -231,10 +272,17 @@ public enum DataType {
     @Getter
     private final int sort;
     private final Resolver resolver;
+    @Getter
+    private final boolean visible;
 
     DataType(int sort, Resolver resolver) {
+        this(sort, Boolean.TRUE, resolver);
+    }
+
+    DataType(int sort, boolean visible, Resolver resolver) {
         this.sort = sort;
         this.resolver = resolver;
+        this.visible = visible;
     }
 
     public Object resolve(DataStructure dataStructure, Object val) throws IllegalArgumentException {
