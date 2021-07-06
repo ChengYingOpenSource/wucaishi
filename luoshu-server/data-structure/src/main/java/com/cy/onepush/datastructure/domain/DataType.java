@@ -142,6 +142,25 @@ public enum DataType {
         throw new IllegalArgumentException();
     }),
     @SuppressWarnings("unchecked")
+    BASIC_COLLECTION(97, (dataStructure, raw) -> {
+        if (raw == null && dataStructure.isRequired()) {
+            throw new IllegalArgumentException();
+        }
+        if (raw == null) {
+            return null;
+        }
+
+        if (!(raw instanceof Collection)) {
+            throw new IllegalArgumentException();
+        }
+
+        if (((Collection<Object>) raw).isEmpty() && dataStructure.isRequired()) {
+            throw new IllegalArgumentException();
+        }
+
+        return new ArrayList<>(((Collection<Object>) raw));
+    }),
+    @SuppressWarnings("unchecked")
     COLLECTION(98, (dataStructure, raw) -> {
         if (raw == null && dataStructure.isRequired()) {
             throw new IllegalArgumentException();
@@ -178,7 +197,7 @@ public enum DataType {
         );
     }),
     @SuppressWarnings("unchecked")
-    ITEM(97, (dataStructure, raw) -> {
+    ITEM(96, (dataStructure, raw) -> {
         if (raw == null && dataStructure.isRequired()) {
             throw new IllegalArgumentException();
         }
