@@ -79,7 +79,11 @@ public class Gateway extends AbstractAggregateRoot<String> {
             executionContext.exitContext();
         }
 
-        return executionContext.getResult();
+        final Object result = executionContext.getResult();
+        if (result instanceof Map) {
+            return ((Map<?, ?>) result).get("data");
+        }
+        return result;
     }
 
     public void publish() {
