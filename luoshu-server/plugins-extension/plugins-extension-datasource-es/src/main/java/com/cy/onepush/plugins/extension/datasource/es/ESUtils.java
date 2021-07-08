@@ -1,8 +1,14 @@
-package com.cy.onepush.plugins.extension.datasource.http;
+package com.cy.onepush.plugins.extension.datasource.es;
 
+import com.cy.onepush.common.exception.IllegalStateException;
 import com.cy.onepush.common.exception.ResourceLimitException;
 import com.cy.onepush.datasource.domain.DataSourceProperties;
+import com.cy.onepush.plugins.extension.datasource.es.bean.ClusterHealth;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.AsyncClientHttpRequest;
@@ -12,15 +18,22 @@ import org.springframework.util.concurrent.ListenableFuture;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 @Slf4j
-public class HTTPUtils {
+public class ESUtils {
 
     private static final Integer MAX_CONNECTION_COUNT = 10;
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    static {
+        OBJECT_MAPPER.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     private static volatile int connectionTesting = 0;
     private static final Object LOCK = new Object();
@@ -45,23 +58,25 @@ public class HTTPUtils {
             final SimpleClientHttpRequestFactory clientFactory = new SimpleClientHttpRequestFactory();
             clientFactory.setTaskExecutor(new SimpleAsyncTaskExecutor("test-http-connection-"));
             try {
-                final AsyncClientHttpRequest request = clientFactory.createAsyncRequest(URI.create(properties.getProperty("url")), HttpMethod.GET);
-                final ListenableFuture<ClientHttpResponse> listenableFuture = request.executeAsync();
+                // 是否已连接
+                getResponse(URI.create(properties.getProperty("url")), properties, clientFactory);
 
-                for (int i = 0; i < 3; i++) {
-                    final ClientHttpResponse response = listenableFuture.get(1, TimeUnit.SECONDS);
-                    if (response.getRawStatusCode() == 200) {
-                        return true;
-                    }
+                // 集群状态检查
+                final URI healthUri = URI.create(properties.getProperty("url")).resolve("/_cluster/health");
+                final String healthCheckResp = getResponse(healthUri, properties, clientFactory);
+
+                final ClusterHealth clusterHealth = OBJECT_MAPPER.readValue(healthCheckResp, ClusterHealth.class);
+                if (!clusterHealth.getTimedOut()) {
+                    return true;
                 }
 
-                log.warn("the http datasource connection test failed with time exceed or the service not ready");
+                log.warn("the esdatasource connection test failed with time exceed or the service not ready {}", clusterHealth);
                 return false;
             } catch (InterruptedException e) {
-                log.warn("the http datasource interrupted");
+                log.warn("the esdatasource interrupted");
                 return false;
             } catch (IOException | ExecutionException | TimeoutException e) {
-                log.warn("the http datasource connection test failed with", e);
+                log.warn("the esdatasource connection test failed with", e);
                 return false;
             }
         } finally {
@@ -69,6 +84,22 @@ public class HTTPUtils {
                 connectionTesting--;
             }
         }
+    }
+
+    private static String getResponse(URI uri, Properties properties, SimpleClientHttpRequestFactory clientFactory)
+        throws InterruptedException, IllegalStateException, IOException, ExecutionException, TimeoutException {
+
+        final AsyncClientHttpRequest request = clientFactory.createAsyncRequest(uri, HttpMethod.GET);
+        final ListenableFuture<ClientHttpResponse> listenableFuture = request.executeAsync();
+
+        for (int i = 0; i < 3; i++) {
+            final ClientHttpResponse response = listenableFuture.get(1, TimeUnit.SECONDS);
+            if (response.getRawStatusCode() == 200) {
+                return IOUtils.toString(response.getBody(), StandardCharsets.UTF_8);
+            }
+        }
+
+        throw new IllegalStateException();
     }
 
     static Properties propertiesResolved(Properties raw) {

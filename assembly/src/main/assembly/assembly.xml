@@ -35,6 +35,13 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>${project.parent.basedir}/luoshu-server/plugins-extension/plugins-extension-datasource-es/target/</directory>
+            <outputDirectory>plugins</outputDirectory>
+            <includes>
+                <include>plugins-extension-datasource-es-*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>${project.parent.basedir}/luoshu-server/plugins-extension/plugins-extension-script-engine-groovy/target/</directory>
             <outputDirectory>plugins</outputDirectory>
             <includes>
@@ -71,6 +78,7 @@
             <excludes>
                 <exclude>com.cy.onepush:plugins-extension-datasource-jdbc</exclude>
                 <exclude>com.cy.onepush:plugins-extension-datasource-http</exclude>
+                <exclude>com.cy.onepush:plugins-extension-datasource-es</exclude>
                 <exclude>com.cy.onepush:plugins-extension-script-engine-groovy</exclude>
                 <exclude>org.codehaus.groovy:*</exclude>
             </excludes>
