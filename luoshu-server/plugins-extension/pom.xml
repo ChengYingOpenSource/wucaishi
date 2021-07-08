@@ -13,12 +13,13 @@
     <artifactId>plugins-extension</artifactId>
 
     <name>plugins-extension</name>
-    <url>http://www.example.com</url>
+    <url>https://github.com/ChengYingOpenSource/wucaishi</url>
 
     <modules>
         <module>plugins-extension-datasource-jdbc</module>
         <module>plugins-extension-datasource-http</module>
         <module>plugins-extension-script-engine-groovy</module>
+        <module>plugins-extension-datasource-es</module>
     </modules>
 
 </project>

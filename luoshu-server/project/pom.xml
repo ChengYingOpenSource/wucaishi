@@ -12,7 +12,7 @@
     <artifactId>project</artifactId>
 
     <name>project</name>
-    <url>http://www.example.com</url>
+    <url>https://github.com/ChengYingOpenSource/wucaishi</url>
 
     <dependencies>
         <dependency>

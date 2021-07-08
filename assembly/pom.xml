@@ -13,7 +13,7 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <name>assembly</name>
-    <url>http://www.example.com</url>
+    <url>https://github.com/ChengYingOpenSource/wucaishi</url>
 
     <dependencies>
         <dependency>

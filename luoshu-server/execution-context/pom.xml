@@ -12,7 +12,7 @@
     <artifactId>execution-context</artifactId>
 
     <name>execution-context</name>
-    <url>http://www.example.com</url>
+    <url>https://github.com/ChengYingOpenSource/wucaishi</url>
 
     <dependencies>
         <dependency>

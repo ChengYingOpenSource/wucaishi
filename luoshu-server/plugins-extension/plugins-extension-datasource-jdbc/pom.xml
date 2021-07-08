@@ -12,7 +12,7 @@
     <artifactId>plugins-extension-datasource-jdbc</artifactId>
 
     <name>plugins-extension-datasource-jdbc</name>
-    <url>http://www.example.com</url>
+    <url>https://github.com/ChengYingOpenSource/wucaishi</url>
 
     <dependencies>
         <dependency>
