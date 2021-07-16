@@ -7,8 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import org.springframework.util.DigestUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -20,13 +23,22 @@ public interface DataViewDOAssembly {
 
     DataViewDOAssembly ASSEMBLY = Mappers.getMapper(DataViewDOAssembly.class);
 
+    @Named("md5FromDataPackager")
+    default String md5FromDataPackager(String id) {
+        if (StringUtils.isBlank(id)) {
+            return null;
+        }
+
+        return DigestUtils.md5DigestAsHex(id.getBytes(StandardCharsets.UTF_8));
+    }
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "code", source = "dataView.id.id")
     @Mapping(target = "name", source = "dataView.name")
     @Mapping(target = "params", expression = "java( DataViewDOAssembly.ASSEMBLY.paramsFromMap(objectMapper, dataView.getParams()) )")
     @Mapping(target = "datasourceCode", source = "dataView.dataSource.id.id")
-    @Mapping(target = "reqDatastructureCode", source = "dataView.requestDataStructure.id.id")
-    @Mapping(target = "respDatastructureCode", source = "dataView.responseDataStructure.id.id")
+    @Mapping(target = "reqDatastructureCode", source = "dataView.requestDataStructure.id.id", qualifiedByName = "md5FromDataPackager")
+    @Mapping(target = "respDatastructureCode", source = "dataView.responseDataStructure.id.id", qualifiedByName = "md5FromDataPackager")
     @Mapping(target = "version", source = "dataView.dataViewVersion.id")
     @Mapping(target = "gmtCreated", source = "date")
     @Mapping(target = "gmtModified", source = "date")

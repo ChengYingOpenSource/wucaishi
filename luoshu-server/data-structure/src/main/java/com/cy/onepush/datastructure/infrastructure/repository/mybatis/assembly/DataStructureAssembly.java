@@ -5,11 +5,13 @@ import com.cy.onepush.datastructure.infrastructure.repository.mybatis.bean.DataS
 import org.apache.commons.collections4.CollectionUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import org.springframework.util.DigestUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Mapper
 public interface DataStructureAssembly {
@@ -17,7 +19,7 @@ public interface DataStructureAssembly {
     DataStructureAssembly ASSEMBLY = Mappers.getMapper(DataStructureAssembly.class);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "code", expression = "java( String.format(\"%s_%s\", parentCode, dataStructure.getField()) )")
+    @Mapping(target = "code", expression = "java( DataStructureAssembly.ASSEMBLY.toCode(parentCode, dataStructure) )")
     @Mapping(target = "name", source = "dataStructure.name")
     @Mapping(target = "field", source = "dataStructure.field")
     @Mapping(target = "targetCode", source = "targetCode")
@@ -47,6 +49,23 @@ public interface DataStructureAssembly {
         if (CollectionUtils.isNotEmpty(children)) {
             children.forEach(child -> DataStructureAssembly.ASSEMBLY.dfs(targetCode, child, current.getCode(), date, list));
         }
+    }
+
+    @Named("toCode")
+    default String toCode(String parentCode, DataStructure dataStructure) {
+        return md5Code(String.format("%s_%s", parentCode, dataStructure.getField()));
+    }
+
+    default List<String> md5Codes(Collection<String> codes) {
+        if (CollectionUtils.isEmpty(codes)) {
+            return Collections.emptyList();
+        }
+
+        return codes.stream().map(DataStructureAssembly.ASSEMBLY::md5Code).collect(Collectors.toList());
+    }
+
+    default String md5Code(String code) {
+        return DigestUtils.md5DigestAsHex(code.getBytes(StandardCharsets.UTF_8));
     }
 
 }

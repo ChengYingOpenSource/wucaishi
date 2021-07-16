@@ -5,10 +5,14 @@ import com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPa
 import com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerScriptDO;
 import com.cy.onepush.datapackager.infrastructure.repository.mybatis.bean.DataPackagerViewDO;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import org.springframework.util.DigestUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,8 +32,8 @@ public interface DataPackagerAssembly {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "code", source = "dataPackager.id.id")
     @Mapping(target = "name", source = "dataPackager.name")
-    @Mapping(target = "reqDatastructureCode", source = "dataPackager.requestDataStructure.id.id")
-    @Mapping(target = "respDatastructureCode", source = "dataPackager.responseDataStructure.id.id")
+    @Mapping(target = "reqDatastructureCode", source = "dataPackager.requestDataStructure.id.id", qualifiedByName = "md5FromDataPackager")
+    @Mapping(target = "respDatastructureCode", source = "dataPackager.responseDataStructure.id.id", qualifiedByName = "md5FromDataPackager")
     @Mapping(target = "version", source = "dataPackager.version.id")
     @Mapping(target = "gmtCreated", source = "date")
     @Mapping(target = "gmtModified", source = "date")
@@ -64,6 +68,15 @@ public interface DataPackagerAssembly {
                 return dataPackagerViewDO;
             })
             .collect(Collectors.toList());
+    }
+
+    @Named("md5FromDataPackager")
+    default String md5FromDataPackager(String id) {
+        if (StringUtils.isBlank(id)) {
+            return null;
+        }
+
+        return DigestUtils.md5DigestAsHex(id.getBytes(StandardCharsets.UTF_8));
     }
 
 }
