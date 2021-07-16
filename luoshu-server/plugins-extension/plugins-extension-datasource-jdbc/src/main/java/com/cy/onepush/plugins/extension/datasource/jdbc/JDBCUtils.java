@@ -2,7 +2,6 @@ package com.cy.onepush.plugins.extension.datasource.jdbc;
 
 import com.alibaba.druid.util.JdbcUtils;
 import com.cy.onepush.common.exception.ResourceLimitException;
-import com.cy.onepush.common.exception.ResourceNotFoundException;
 import com.cy.onepush.datasource.domain.DataSourceProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -49,9 +48,8 @@ public class JDBCUtils {
             try {
                 Class.forName(driverKlassName);
             } catch (ClassNotFoundException e) {
-                final ResourceNotFoundException resourceNotFoundException = new ResourceNotFoundException("the driver class named %s not found", driverKlassName);
-                log.error(resourceNotFoundException.getMessage());
-                throw resourceNotFoundException;
+                log.error("the driver class named {} not found", driverKlassName);
+                return false;
             }
 
             // try to connection test
