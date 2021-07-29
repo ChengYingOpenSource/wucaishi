@@ -29,6 +29,7 @@ import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -156,16 +157,16 @@ public class HTTPDataView extends ParamsDataView {
         final DataSource dataSource = getDataSource();
         final Properties properties = HTTPUtils.propertiesResolved(dataSource.getProperties().toJdkProperties());
 
-        final String mainUrl = properties.getProperty("url");
+        final URI mainUrl = URI.create(properties.getProperty("url"));
 
         final Map<String, Object> params = getParams();
         final String path = MapUtils.getString(params, "contextUrl");
 
         if (StringUtils.isBlank(path)) {
-            return mainUrl;
+            return mainUrl.toString();
         }
 
-        return String.format("%s/%s", mainUrl, path);
+        return mainUrl.resolve(path).toString();
     }
 
     static {

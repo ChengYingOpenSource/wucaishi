@@ -114,7 +114,12 @@
                         <configuration>
                             <type>jar</type>
                             <includeTypes>jar</includeTypes>
-                            <excludeArtifactIds>plugins-extension-datasource-jdbc,plugins-extension-script-engine-groovy</excludeArtifactIds>
+                            <excludeArtifactIds>
+                                plugins-extension-datasource-es,
+                                plugins-extension-datasource-http,
+                                plugins-extension-datasource-jdbc,
+                                plugins-extension-script-engine-groovy
+                            </excludeArtifactIds>
                             <outputDirectory>
                                 target/lib
                             </outputDirectory>

@@ -3,6 +3,7 @@ package com.cy.onepush.plugins.extension.datasource.http;
 import com.cy.onepush.common.exception.ResourceLimitException;
 import com.cy.onepush.datasource.domain.DataSourceProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.AsyncClientHttpRequest;
@@ -11,7 +12,9 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.util.concurrent.ListenableFuture;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -82,10 +85,20 @@ public class HTTPUtils {
     }
 
     static String createUrl(Properties properties) {
-        final String protocol = properties.getProperty("protocol");
+        final String protocol = properties.getProperty("protocol", "http");
         final String host = properties.getProperty("host");
-        final String port = properties.getProperty("port");
-        return String.format("%s://%s:%s", protocol, host, port);
+        final String port = properties.getProperty("port", "80");
+
+        try {
+            String actualHost;
+            if (StringUtils.isBlank(actualHost = URI.create(host).getHost())) {
+                actualHost = host;
+            }
+
+            return new URL(protocol, actualHost, Integer.parseInt(port), "").toString();
+        } catch (MalformedURLException e) {
+            return null;
+        }
     }
 
 }
