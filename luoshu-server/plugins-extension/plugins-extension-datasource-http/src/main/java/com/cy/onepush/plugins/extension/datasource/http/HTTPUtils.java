@@ -44,26 +44,24 @@ public class HTTPUtils {
 
             final SimpleClientHttpRequestFactory clientFactory = new SimpleClientHttpRequestFactory();
             clientFactory.setTaskExecutor(new SimpleAsyncTaskExecutor("test-http-connection-"));
-            try {
-                final AsyncClientHttpRequest request = clientFactory.createAsyncRequest(URI.create(properties.getProperty("url")), HttpMethod.GET);
-                final ListenableFuture<ClientHttpResponse> listenableFuture = request.executeAsync();
+            for (int i = 0; i < 3; i++) {
+                try {
+                    final AsyncClientHttpRequest request = clientFactory.createAsyncRequest(URI.create(properties.getProperty("url")), HttpMethod.GET);
+                    final ListenableFuture<ClientHttpResponse> listenableFuture = request.executeAsync();
 
-                for (int i = 0; i < 3; i++) {
-                    final ClientHttpResponse response = listenableFuture.get(1, TimeUnit.SECONDS);
-                    if (response.getRawStatusCode() == 200) {
-                        return true;
-                    }
+                    listenableFuture.get(1, TimeUnit.SECONDS);
+                    return true;
+                } catch (IOException | ExecutionException | TimeoutException e) {
+                    log.warn("the http datasource connection test failed with", e);
+                } catch (InterruptedException e) {
+                    log.warn("the http datasource interrupted");
+                    return false;
                 }
-
-                log.warn("the http datasource connection test failed with time exceed or the service not ready");
-                return false;
-            } catch (InterruptedException e) {
-                log.warn("the http datasource interrupted");
-                return false;
-            } catch (IOException | ExecutionException | TimeoutException e) {
-                log.warn("the http datasource connection test failed with", e);
-                return false;
             }
+
+            log.warn("the http datasource connection test failed with time exceed or the service not ready");
+            return false;
+
         } finally {
             synchronized (LOCK) {
                 connectionTesting--;
