@@ -24,7 +24,7 @@ public interface DataStructureAssembly {
     @Mapping(target = "field", source = "dataStructure.field")
     @Mapping(target = "targetCode", source = "targetCode")
     @Mapping(target = "required", source = "dataStructure.required")
-    @Mapping(target = "parentCode", source = "parentCode")
+    @Mapping(target = "parentCode", source = "parentCode", qualifiedByName = "md5Code")
     @Mapping(target = "gmtCreated", source = "date")
     @Mapping(target = "gmtModified", source = "date")
     DataStructureDO doFromDomain(DataStructure dataStructure, String parentCode, String targetCode, Date date);
@@ -56,14 +56,7 @@ public interface DataStructureAssembly {
         return md5Code(String.format("%s_%s", parentCode, dataStructure.getField()));
     }
 
-    default List<String> md5Codes(Collection<String> codes) {
-        if (CollectionUtils.isEmpty(codes)) {
-            return Collections.emptyList();
-        }
-
-        return codes.stream().map(DataStructureAssembly.ASSEMBLY::md5Code).collect(Collectors.toList());
-    }
-
+    @Named("md5Code")
     default String md5Code(String code) {
         return DigestUtils.md5DigestAsHex(code.getBytes(StandardCharsets.UTF_8));
     }
