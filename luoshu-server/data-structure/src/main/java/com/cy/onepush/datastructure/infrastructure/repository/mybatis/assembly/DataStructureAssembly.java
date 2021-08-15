@@ -24,7 +24,7 @@ public interface DataStructureAssembly {
     @Mapping(target = "field", source = "dataStructure.field")
     @Mapping(target = "targetCode", source = "targetCode")
     @Mapping(target = "required", source = "dataStructure.required")
-    @Mapping(target = "parentCode", source = "parentCode", qualifiedByName = "md5Code")
+    @Mapping(target = "parentCode", source = "parentCode")
     @Mapping(target = "gmtCreated", source = "date")
     @Mapping(target = "gmtModified", source = "date")
     DataStructureDO doFromDomain(DataStructure dataStructure, String parentCode, String targetCode, Date date);
